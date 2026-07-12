@@ -115,6 +115,34 @@ describe('/api/apps', () => {
     }
   });
 
+  it('strips non-allow-listed fields from write payloads (mass assignment)', async () => {
+    const res = await request(api)
+      .post('/api/apps')
+      .set(authHeaders(token))
+      .send({
+        name: 'MassAssign',
+        url: 'mass.local',
+        injectedField: 'evil',
+        createdAt: '1970-01-01T00:00:00.000Z',
+      });
+
+    expect(res.status).toBe(201);
+    expect(res.body.data.injectedField).toBeUndefined();
+    // createdAt cannot be dictated by the client
+    expect(new Date(res.body.data.createdAt).getFullYear()).toBeGreaterThan(
+      2020
+    );
+  });
+
+  it('returns 400 (not 500) for model validation failures', async () => {
+    const res = await request(api)
+      .post('/api/apps')
+      .set(authHeaders(token))
+      .send({ name: 'NoUrl' });
+
+    expect(res.status).toBe(400);
+  });
+
   it('DELETE /:id removes the app', async () => {
     const created = await request(api)
       .post('/api/apps')

@@ -1,25 +1,44 @@
-const ErrorResponse = require('../utils/ErrorResponse');
 const Logger = require('../utils/Logger');
 const logger = new Logger();
 
+// Central error responder. Operational errors (utils/ErrorResponse with an
+// explicit statusCode) pass their message through. Multer and Sequelize
+// validation failures map to 400 with their (safe, field-level) messages.
+// Everything else is logged in full server-side and returned as a generic
+// 500 in production so internals never leak to clients.
 const errorHandler = (err, req, res, next) => {
-  let error = { ...err };
-  error.message = err.message;
+  const message = err.message || 'Server Error';
 
-  // if (error.errors[0].type === 'unique violation') {
-  //   const msg = error.errors[0].message;
-  //   error = new ErrorResponse(`Field ${msg}`, 400);
-  // }
-
-  logger.log(error.message.split(',')[0], 'ERROR');
+  logger.log(String(message).split(',')[0], 'ERROR');
 
   if (process.env.NODE_ENV == 'development') {
     console.log(err);
   }
 
-  res.status(err.statusCode || 500).json({
+  if (typeof err.statusCode === 'number') {
+    return res.status(err.statusCode).json({
+      success: false,
+      error: message,
+    });
+  }
+
+  if (err.name === 'MulterError') {
+    return res.status(400).json({
+      success: false,
+      error: message,
+    });
+  }
+
+  if (err.name === 'SequelizeValidationError') {
+    return res.status(400).json({
+      success: false,
+      error: err.errors.map((e) => e.message).join(', '),
+    });
+  }
+
+  res.status(500).json({
     success: false,
-    error: error.message || 'Server Error',
+    error: process.env.NODE_ENV === 'production' ? 'Server Error' : message,
   });
 };
 

@@ -1,5 +1,7 @@
 const slugify = () => {
-  const version = process.env.VERSION;
+  // VERSION normally comes from .env; a missing value must not crash the
+  // whole boot just to name a backup file.
+  const version = process.env.VERSION || 'unknown';
   const slug = `db-${version.replace(/\./g, '')}-backup.sqlite`;
   return slug;
 };

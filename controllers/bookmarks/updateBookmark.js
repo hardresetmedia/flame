@@ -1,6 +1,8 @@
 const asyncWrapper = require('../../middleware/asyncWrapper');
 const ErrorResponse = require('../../utils/ErrorResponse');
 const Bookmark = require('../../models/Bookmark');
+const pick = require('../../utils/pick');
+const { BOOKMARK_WRITABLE_FIELDS } = require('../../utils/writableFields');
 
 // @desc      Update bookmark
 // @route     PUT /api/bookmarks/:id
@@ -20,7 +22,7 @@ const updateBookmark = asyncWrapper(async (req, res, next) => {
   }
 
   let body = {
-    ...req.body,
+    ...pick(req.body, BOOKMARK_WRITABLE_FIELDS),
     categoryId: parseInt(req.body.categoryId),
   };
 

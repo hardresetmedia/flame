@@ -1,15 +1,17 @@
 const asyncWrapper = require('../../middleware/asyncWrapper');
 const Category = require('../../models/Category');
 const loadConfig = require('../../utils/loadConfig');
+const pick = require('../../utils/pick');
+const { CATEGORY_WRITABLE_FIELDS } = require('../../utils/writableFields');
 
 // @desc      Create new category
 // @route     POST /api/categories
-// @access    Public
+// @access    Private
 const createCategory = asyncWrapper(async (req, res, next) => {
   const { pinCategoriesByDefault: pinCategories } = await loadConfig();
 
   const category = await Category.create({
-    ...req.body,
+    ...pick(req.body, CATEGORY_WRITABLE_FIELDS),
     isPinned: pinCategories,
   });
 

@@ -1,14 +1,16 @@
 const asyncWrapper = require('../../middleware/asyncWrapper');
 const App = require('../../models/App');
 const loadConfig = require('../../utils/loadConfig');
+const pick = require('../../utils/pick');
+const { APP_WRITABLE_FIELDS } = require('../../utils/writableFields');
 
 // @desc      Create new app
 // @route     POST /api/apps
-// @access    Public
+// @access    Private
 const createApp = asyncWrapper(async (req, res, next) => {
   const { pinAppsByDefault } = await loadConfig();
 
-  let body = { ...req.body };
+  let body = pick(req.body, APP_WRITABLE_FIELDS);
 
   if (body.icon) {
     body.icon = body.icon.trim();

@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize');
 const { join } = require('path');
-const Umzug = require('umzug');
+const { Umzug, SequelizeStorage } = require('umzug');
 
 // Utils
 const backupDB = require('./utils/backupDb');
@@ -13,15 +13,28 @@ const sequelize = new Sequelize({
   logging: false,
 });
 
+// Umzug 3. The resolve shim adapts the existing migration files, which
+// export up(queryInterface)/down(queryInterface). Migration names are the
+// file basenames INCLUDING the .js extension — this must never change:
+// it is what Umzug 2 historically recorded in SequelizeMeta, and a name
+// mismatch would re-run old migrations against live databases
+// (tests/migrations.test.js pins this).
 const umzug = new Umzug({
   migrations: {
-    path: join(__dirname, './migrations'),
-    params: [sequelize.getQueryInterface()],
+    glob: ['migrations/*.js', { cwd: __dirname }],
+    resolve: ({ name, path: migrationPath, context }) => {
+      const migration = require(migrationPath);
+
+      return {
+        name,
+        up: async () => migration.up(context),
+        down: async () => migration.down(context),
+      };
+    },
   },
-  storage: 'sequelize',
-  storageOptions: {
-    sequelize,
-  },
+  context: sequelize.getQueryInterface(),
+  storage: new SequelizeStorage({ sequelize }),
+  logger: undefined,
 });
 
 const connectDB = async () => {

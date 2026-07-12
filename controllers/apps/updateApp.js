@@ -1,5 +1,7 @@
 const asyncWrapper = require('../../middleware/asyncWrapper');
 const App = require('../../models/App');
+const pick = require('../../utils/pick');
+const { APP_WRITABLE_FIELDS } = require('../../utils/writableFields');
 
 // @desc      Update app
 // @route     PUT /api/apps/:id
@@ -18,7 +20,7 @@ const updateApp = asyncWrapper(async (req, res, next) => {
     );
   }
 
-  let body = { ...req.body };
+  let body = pick(req.body, APP_WRITABLE_FIELDS);
 
   if (body.icon) {
     body.icon = body.icon.trim();

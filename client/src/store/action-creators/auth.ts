@@ -8,7 +8,10 @@ import {
   LogoutAction,
 } from '../actions/auth';
 import axios, { AxiosError } from 'axios';
-import { getApps, getCategories } from '.';
+// getConfig is re-dispatched on every auth change: the server returns the
+// full config only to authenticated clients (secrets are redacted for
+// anonymous ones), so the cached copy must be refreshed after login/logout.
+import { getApps, getCategories, getConfig } from '.';
 
 export const login =
   (formData: { password: string; duration: string }) =>
@@ -28,6 +31,7 @@ export const login =
 
       dispatch<any>(getApps());
       dispatch<any>(getCategories());
+      dispatch<any>(getConfig());
     } catch (err) {
       dispatch<any>(authError(err, true));
     }
@@ -42,6 +46,7 @@ export const logout = () => (dispatch: Dispatch<LogoutAction>) => {
 
   dispatch<any>(getApps());
   dispatch<any>(getCategories());
+  dispatch<any>(getConfig());
 };
 
 export const autoLogin = () => async (dispatch: Dispatch<AutoLoginAction>) => {
@@ -60,6 +65,7 @@ export const autoLogin = () => async (dispatch: Dispatch<AutoLoginAction>) => {
 
     dispatch<any>(getApps());
     dispatch<any>(getCategories());
+    dispatch<any>(getConfig());
   } catch (err) {
     dispatch<any>(authError(err, false));
   }

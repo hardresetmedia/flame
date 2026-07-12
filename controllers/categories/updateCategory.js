@@ -1,6 +1,8 @@
 const asyncWrapper = require('../../middleware/asyncWrapper');
 const ErrorResponse = require('../../utils/ErrorResponse');
 const Category = require('../../models/Category');
+const pick = require('../../utils/pick');
+const { CATEGORY_WRITABLE_FIELDS } = require('../../utils/writableFields');
 
 // @desc      Update category
 // @route     PUT /api/categories/:id
@@ -19,7 +21,7 @@ const updateCategory = asyncWrapper(async (req, res, next) => {
     );
   }
 
-  category = await category.update({ ...req.body });
+  category = await category.update(pick(req.body, CATEGORY_WRITABLE_FIELDS));
 
   res.status(200).json({
     success: true,

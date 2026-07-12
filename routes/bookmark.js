@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 // middleware
-const { upload, auth, requireAuth } = require('../middleware');
+const { upload, validateUpload, auth, requireAuth } = require('../middleware');
 
 const {
   createBookmark,
@@ -15,13 +15,13 @@ const {
 
 router
   .route('/')
-  .post(auth, requireAuth, upload, createBookmark)
+  .post(auth, requireAuth, upload, validateUpload, createBookmark)
   .get(auth, getAllBookmarks);
 
 router
   .route('/:id')
   .get(auth, getSingleBookmark)
-  .put(auth, requireAuth, upload, updateBookmark)
+  .put(auth, requireAuth, upload, validateUpload, updateBookmark)
   .delete(auth, requireAuth, deleteBookmark);
 
 router.route('/0/reorder').put(auth, requireAuth, reorderBookmarks);
