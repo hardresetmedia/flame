@@ -1,9 +1,16 @@
-version: '3.6'
-
+# Flame (hardresetmedia fork). Build locally from this repo's Dockerfile
+# rather than pulling the upstream image — this fork has diverged.
 services:
   flame:
-    image: pawelmalak/flame
+    build:
+      context: ..
+      dockerfile: .docker/Dockerfile
     container_name: flame
+    # The container runs as the non-root `node` user (uid 1000). The bind-
+    # mounted data dir must be writable by uid 1000 — either `chown 1000:1000
+    # /path/to/host/data` on the host, or uncomment the `user:` line below to
+    # match your host user.
+    # user: "1000:1000"
     volumes:
       - /path/to/host/data:/app/data
       # - /var/run/docker.sock:/var/run/docker.sock # optional but required for Docker integration
@@ -12,10 +19,14 @@ services:
     # secrets:
     #   - password # optional but required for (1)
     environment:
-      - PASSWORD=flame_password
+      # REQUIRED: the server refuses to authenticate with an unset or known-
+      # default password. There is no default any more.
+      - PASSWORD=change-me-to-a-real-password
       # - PASSWORD_FILE=/run/secrets/password # optional but required for (1)
+      # - SECRET=... # optional; auto-generated + persisted to data/.secret otherwise
+      - VERSION=2.4.0
     restart: unless-stopped
-    
+
 # optional but required for Docker secrets (1)
 # secrets:
 #   password:

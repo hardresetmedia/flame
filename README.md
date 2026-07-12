@@ -2,6 +2,58 @@
 
 ![Homescreen screenshot](.github/home.png)
 
+---
+
+## HardReset Media fork
+
+This is a maintained fork of [pawelmalak/flame](https://github.com/pawelmalak/flame)
+(upstream is dormant). It diverges from upstream and is **not** intended to
+merge back. Changes on top of v2.4.0:
+
+- **Modern toolchain** — client migrated from Create React App to **Vite**,
+  React 18, react-router 6, TypeScript 5; server on Express 4.21, Sequelize
+  6.37, Umzug 3, jsonwebtoken 9, multer 2, axios 1; Node 22 images.
+- **Security hardening** — `GET /api/config` redacts secrets (weather key,
+  coordinates, docker/k8s settings) from anonymous callers; constant-time
+  login that refuses the default password, rate-limited on the real (CF-aware)
+  client IP; server-clamped JWT lifetimes; hardened icon uploads
+  (extension+mimetype allow-list, magic-byte check, 2 MB cap, server-side SVG
+  sanitization); mass-assignment allow-lists; helmet + CSP; non-root container.
+- **URL-driven profiles** — visit `#!/novastream`, `#!/hardresetmedia`,
+  `#!/laptop` … to switch which apps/bookmarks show, with an optional
+  per-profile theme and settings overrides. Manage them under
+  **Settings → Profiles**.
+- **Auto-activation rules** — each profile can carry conditions (device class,
+  viewport, touch, battery, time of day, day of week, client IP/CIDR) that
+  auto-select it. Precedence: `#!/hash` > matched rule > remembered choice >
+  default profile > base view. A live "this device right now" readout in the
+  Profiles settings shows which profile the current rules would activate.
+
+### Tests
+
+```sh
+npm test                 # server API integration tests (vitest + supertest)
+npm test --prefix client # client unit tests (rules engine, CIDR, filters)
+npm run build:client     # build the client into public/
+npm run test:e2e         # Playwright smoke + profiles + rules (needs the build)
+```
+
+### ⚠️ Before deploying (migration safety gate)
+
+The Umzug 2→3 upgrade must recognize the migration names already recorded in
+your live database. Copy your production `data` dir locally and run:
+
+```sh
+node scripts/verify-migration.js /path/to/copy-of-data
+# PASS = only 06_profiles.js is pending (00–05 seen as already run)
+```
+
+The container now runs as the non-root `node` user (uid 1000), so the
+bind-mounted `data` dir must be writable by uid 1000, and **`PASSWORD` is
+required** (there is no default any more).
+
+---
+
 ## Description
 
 Flame is self-hosted startpage for your server. Its design is inspired (heavily) by [SUI](https://github.com/jeroenpardon/sui). Flame is very easy to setup and use. With built-in editors, it allows you to setup your very own application hub in no time - no file editing necessary.
