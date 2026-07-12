@@ -51,6 +51,20 @@ describe('database migrations', () => {
     expect(names).not.toContain('config');
   });
 
+  it('profileIds columns default to a real [] (not the double-encoded "[]")', async () => {
+    // Regression guard: a string defaultValue ('[]') on a JSON column gets
+    // JSON-encoded to '"[]"', so existing rows would backfill to the string
+    // "[]" instead of an empty array. The default must serialize to '[]'.
+    for (const table of ['apps', 'categories']) {
+      const [columns] = await sequelize.query(`PRAGMA table_info(${table})`);
+      const profileIds = columns.find((c) => c.name === 'profileIds');
+
+      expect(profileIds).toBeDefined();
+      // SQLite reports the DEFAULT with its surrounding quotes: '[]'
+      expect(profileIds.dflt_value).toBe("'[]'");
+    }
+  });
+
   it('booting again reports no pending migrations', async () => {
     // connectDB() already ran in bootApp(); a second run must be a no-op.
     const { connectDB } = require('../db');

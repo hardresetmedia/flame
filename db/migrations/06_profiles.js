@@ -36,7 +36,9 @@ const up = async (query) => {
     rules: {
       type: JSONCOL,
       allowNull: false,
-      defaultValue: '[]',
+      // Actual array, not the string '[]': Sequelize JSON-encodes the
+      // default, so a string default would double-encode to '"[]"'.
+      defaultValue: [],
     },
     orderId: {
       type: INTEGER,
@@ -56,7 +58,10 @@ const up = async (query) => {
   const profileIdsColumn = {
     type: JSONCOL,
     allowNull: false,
-    defaultValue: '[]',
+    // Actual array — existing rows backfill to a real [] (visible in every
+    // profile), not the double-encoded string '"[]"'. See the migration
+    // apply-verification in scripts/verify-migration.js --apply.
+    defaultValue: [],
   };
 
   await query.addColumn('apps', 'profileIds', profileIdsColumn);

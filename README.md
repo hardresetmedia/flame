@@ -44,13 +44,23 @@ The Umzug 2→3 upgrade must recognize the migration names already recorded in
 your live database. Copy your production `data` dir locally and run:
 
 ```sh
+# dry run — checks only 06_profiles.js is pending (00–05 seen as already run)
 node scripts/verify-migration.js /path/to/copy-of-data
-# PASS = only 06_profiles.js is pending (00–05 seen as already run)
+
+# --apply — actually migrates the COPY and checks the new profileIds columns
+# exist and existing rows backfill to []
+node scripts/verify-migration.js /path/to/copy-of-data --apply
 ```
 
-The container now runs as the non-root `node` user (uid 1000), so the
-bind-mounted `data` dir must be writable by uid 1000, and **`PASSWORD` is
-required** (there is no default any more).
+The container now runs as the non-root `node` user (uid 1000). Before the
+first run of the new image, make the bind-mounted data dir writable by
+uid 1000 (else boot fails at the DB backup step):
+
+```sh
+sudo chown -R 1000:1000 /path/to/host/data
+```
+
+**`PASSWORD` is required** — there is no default any more.
 
 ---
 

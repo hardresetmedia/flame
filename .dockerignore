@@ -1,6 +1,31 @@
+# Keep the build context (and resulting image) lean and free of local
+# secrets/state. The Dockerfile installs deps and builds the client itself.
 node_modules
+client/node_modules
+client/.stale-node_modules
+**/.stale-node_modules
+
+.git
 .github
+
+# Local runtime state — the container gets its own data/ (a mounted volume)
 public
+data
+
+# Local env files — PASSWORD/SECRET are supplied at run time, never baked in
+.env
+client/.env
+
+# k8s / skaffold deploy tooling (not used by the Docker image)
 k8s
 skaffold.yaml
-data
+
+# Dev-only tooling and tests (not needed at runtime)
+tests
+e2e
+playwright.config.ts
+playwright-report
+test-results
+vitest.config.mjs
+client/vitest.config.ts
+.dev

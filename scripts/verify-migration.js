@@ -10,19 +10,28 @@
 //
 // Run this against a COPY of the production data dir before deploying:
 //   1. scp the homelab's /app/data to ./verify-data (or any dir)
-//   2. node scripts/verify-migration.js ./verify-data
+//   2. node scripts/verify-migration.js ./verify-data          # dry run
+//   3. node scripts/verify-migration.js ./verify-data --apply  # apply + verify
 //
-// PASS criterion: pending() is EXACTLY ['06_profiles.js'] — i.e. 00-05 are
-// recognized as already executed and only the new migration runs.
+// Dry run PASS: pending() is EXACTLY ['06_profiles.js'] — 00-05 recognized as
+// already executed, only the new migration would run.
+//
+// --apply additionally runs the migration ON THE COPY and asserts that the
+// new profileIds columns exist on apps + categories and that existing rows
+// backfilled to '[]' (visible-in-every-profile). It mutates the copy, never
+// production. Safe because you pointed it at a copy.
 const fs = require('fs');
 const path = require('path');
 const { Sequelize } = require('sequelize');
 const { Umzug, SequelizeStorage } = require('umzug');
 
 const dataDir = process.argv[2];
+const apply = process.argv.includes('--apply');
 
 if (!dataDir) {
-  console.error('Usage: node scripts/verify-migration.js <path-to-data-dir>');
+  console.error(
+    'Usage: node scripts/verify-migration.js <path-to-data-dir> [--apply]'
+  );
   process.exit(2);
 }
 
@@ -84,19 +93,63 @@ const EXPECTED_PENDING = ['06_profiles.js'];
     pending.length === EXPECTED_PENDING.length &&
     EXPECTED_PENDING.every((n) => pending.includes(n));
 
-  await sequelize.close();
+  if (!alreadyRunOk || !pendingOk) {
+    await sequelize.close();
+    console.error(
+      '\nFAIL: migration names do not line up. If 00-05 show as pending, ' +
+        'Umzug 3 would re-run them and the app would not boot. Add a name ' +
+        'normalization to the resolve() shim in db/index.js before deploying.'
+    );
+    process.exit(1);
+  }
 
-  if (alreadyRunOk && pendingOk) {
+  if (!apply) {
+    await sequelize.close();
     console.log(
-      '\nPASS: 00-05 recognized as executed; only 06_profiles.js will run.'
+      '\nPASS (dry run): 00-05 recognized as executed; only 06_profiles.js ' +
+        'would run. Re-run with --apply to actually migrate the copy and ' +
+        'verify the new columns backfill.'
     );
     process.exit(0);
   }
 
-  console.error(
-    '\nFAIL: migration names do not line up. If 00-05 show as pending, ' +
-      'Umzug 3 would re-run them and the app would not boot. Add a name ' +
-      'normalization to the resolve() shim in db/index.js before deploying.'
+  // --apply: run the migration on the copy and verify the schema change lands
+  await umzug.up();
+
+  const queryInterface = sequelize.getQueryInterface();
+  const failures = [];
+
+  for (const table of ['apps', 'categories']) {
+    const columns = await queryInterface.describeTable(table);
+    if (!columns.profileIds) {
+      failures.push(`${table}.profileIds column was not created`);
+      continue;
+    }
+
+    // existing rows must backfill to the '[]' default (visible everywhere)
+    const [rows] = await sequelize.query(
+      `SELECT profileIds FROM \`${table}\` LIMIT 1`
+    );
+    if (rows.length && rows[0].profileIds !== '[]') {
+      failures.push(
+        `${table} existing row backfilled to ${JSON.stringify(
+          rows[0].profileIds
+        )}, expected '[]'`
+      );
+    }
+  }
+
+  await sequelize.close();
+
+  if (failures.length) {
+    console.error('\nFAIL (apply):');
+    failures.forEach((f) => console.error(`  - ${f}`));
+    process.exit(1);
+  }
+
+  console.log(
+    '\nPASS (apply): 06_profiles.js migrated the copy cleanly; profileIds ' +
+      "columns exist on apps + categories and existing rows backfilled to '[]'."
   );
-  process.exit(1);
+  process.exit(0);
 })();
