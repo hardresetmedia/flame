@@ -1,0 +1,20 @@
+.ProfilePicker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 8px 0;
+}
+
+.ProfileOption {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: var(--color-primary);
+}
+
+.ProfileOption input {
+  width: auto;
+  margin: 0;
+  cursor: pointer;
+}

@@ -17,7 +17,9 @@ import { InputGroup, Button, SettingsHeadline } from '../../UI';
 import { inputHandler, weatherSettingsTemplate } from '../../../utility';
 
 export const WeatherSettings = (): JSX.Element => {
-  const { loading, config } = useSelector((state: State) => state.config);
+  const { loading, baseConfig: config } = useSelector(
+    (state: State) => state.config
+  );
 
   const dispatch = useDispatch();
   const { createNotification, updateConfig } = bindActionCreators(

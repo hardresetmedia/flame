@@ -36,6 +36,13 @@ const App = sequelize.define(
       allowNull: false,
       defaultValue: '',
     },
+    // Profile assignment (array of profile ids); [] = visible in every
+    // profile. See db/migrations/06_profiles.js.
+    profileIds: {
+      type: DataTypes.JSON,
+      allowNull: false,
+      defaultValue: [],
+    },
   },
   {
     tableName: 'apps',

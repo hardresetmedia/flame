@@ -9,7 +9,7 @@ import { actionCreators } from '../../../store';
 import { Category, NewCategory } from '../../../interfaces';
 
 // UI
-import { ModalForm, InputGroup, Button } from '../../UI';
+import { ModalForm, InputGroup, Button, ProfilePicker } from '../../UI';
 
 // Utils
 import { inputHandler, newCategoryTemplate } from '../../../utility';
@@ -93,6 +93,12 @@ export const CategoryForm = ({
           <option value={0}>Hidden (authentication required)</option>
         </select>
       </InputGroup>
+
+      {/* Bookmarks inherit their category's profile assignment */}
+      <ProfilePicker
+        selectedIds={formData.profileIds}
+        onChange={(profileIds) => setFormData({ ...formData, profileIds })}
+      />
 
       <Button>{category ? 'Update category' : 'Add new category'}</Button>
     </ModalForm>

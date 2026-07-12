@@ -18,6 +18,7 @@ import { AppDetails } from './AppDetails/AppDetails';
 import { StyleSettings } from './StyleSettings/StyleSettings';
 import { GeneralSettings } from './GeneralSettings/GeneralSettings';
 import { DockerSettings } from './DockerSettings/DockerSettings';
+import { ProfilesSettings } from './ProfilesSettings/ProfilesSettings';
 import { ProtectedRoute } from '../Routing/ProtectedRoute';
 
 // UI
@@ -89,6 +90,14 @@ export const Settings = (): JSX.Element => {
               element={
                 <ProtectedRoute>
                   <DockerSettings />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="profiles"
+              element={
+                <ProtectedRoute>
+                  <ProfilesSettings />
                 </ProtectedRoute>
               }
             />

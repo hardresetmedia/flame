@@ -16,7 +16,11 @@ import { InputGroup, Button, SettingsHeadline } from '../../UI';
 import { uiSettingsTemplate, inputHandler } from '../../../utility';
 
 export const UISettings = (): JSX.Element => {
-  const { loading, config } = useSelector((state: State) => state.config);
+  // Read baseConfig, not the profile-merged view, so an active profile's
+  // overrides are never written back into the saved config.
+  const { loading, baseConfig: config } = useSelector(
+    (state: State) => state.config
+  );
 
   const dispatch = useDispatch();
   const { updateConfig } = bindActionCreators(actionCreators, dispatch);

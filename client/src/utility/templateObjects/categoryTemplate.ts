@@ -3,6 +3,7 @@ import { Category, NewCategory } from '../../interfaces';
 export const newCategoryTemplate: NewCategory = {
   name: '',
   isPublic: true,
+  profileIds: [],
 };
 
 export const categoryTemplate: Category = {

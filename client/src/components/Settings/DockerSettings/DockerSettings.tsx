@@ -16,7 +16,9 @@ import { InputGroup, Button, SettingsHeadline } from '../../UI';
 import { inputHandler, dockerSettingsTemplate } from '../../../utility';
 
 export const DockerSettings = (): JSX.Element => {
-  const { loading, config } = useSelector((state: State) => state.config);
+  const { loading, baseConfig: config } = useSelector(
+    (state: State) => state.config
+  );
 
   const dispatch = useDispatch();
   const { updateConfig } = bindActionCreators(actionCreators, dispatch);

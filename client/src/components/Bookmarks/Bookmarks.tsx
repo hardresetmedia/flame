@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { State } from '../../store/reducers';
 import { bindActionCreators } from 'redux';
 import { actionCreators } from '../../store';
+import { visibleInProfile } from '../../utility';
 
 // Typescript
 import { Category, Bookmark } from '../../interfaces';
@@ -42,6 +43,7 @@ export const Bookmarks = (props: Props): JSX.Element => {
   const {
     bookmarks: { loading, categories, categoryInEdit },
     auth: { isAuthenticated },
+    profiles: { activeProfileId },
   } = useSelector((state: State) => state);
 
   // Get Redux action creators
@@ -183,7 +185,14 @@ export const Bookmarks = (props: Props): JSX.Element => {
       {loading ? (
         <Spinner />
       ) : !showTable ? (
-        <BookmarkGrid categories={categories} searching={props.searching} />
+        // grid view respects the active profile; the edit table below
+        // deliberately shows everything (management view)
+        <BookmarkGrid
+          categories={categories.filter((category) =>
+            visibleInProfile(category, activeProfileId)
+          )}
+          searching={props.searching}
+        />
       ) : (
         <Table
           contentType={tableContentType}

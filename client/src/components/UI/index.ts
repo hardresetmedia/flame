@@ -12,6 +12,7 @@ export * from './Headlines/SectionHeadline/SectionHeadline';
 export * from './Headlines/SettingsHeadline/SettingsHeadline';
 export * from './Forms/InputGroup/InputGroup';
 export * from './Forms/ModalForm/ModalForm';
+export * from './Forms/ProfilePicker/ProfilePicker';
 export * from './Buttons/ActionButton/ActionButton';
 export * from './Buttons/Button/Button';
 export * from './Text/Message/Message';

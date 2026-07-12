@@ -10,6 +10,7 @@ const APP_WRITABLE_FIELDS = [
   'isPublic',
   'isPinned',
   'orderId',
+  'profileIds',
 ];
 
 const BOOKMARK_WRITABLE_FIELDS = [
@@ -21,10 +22,26 @@ const BOOKMARK_WRITABLE_FIELDS = [
   'orderId',
 ];
 
-const CATEGORY_WRITABLE_FIELDS = ['name', 'isPinned', 'isPublic', 'orderId'];
+const CATEGORY_WRITABLE_FIELDS = [
+  'name',
+  'isPinned',
+  'isPublic',
+  'orderId',
+  'profileIds',
+];
+
+const PROFILE_WRITABLE_FIELDS = [
+  'name',
+  'isDefault',
+  'theme',
+  'overrides',
+  'rules',
+  'orderId',
+];
 
 module.exports = {
   APP_WRITABLE_FIELDS,
   BOOKMARK_WRITABLE_FIELDS,
   CATEGORY_WRITABLE_FIELDS,
+  PROFILE_WRITABLE_FIELDS,
 };

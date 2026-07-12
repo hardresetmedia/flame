@@ -6,6 +6,13 @@ export interface GetConfigAction {
   payload: Config;
 }
 
+// Profiles feature: merge (or clear, with null) the active profile's
+// config overrides into the derived config view
+export interface ApplyProfileOverridesAction {
+  type: ActionType.applyProfileOverrides;
+  payload: Partial<Config> | null;
+}
+
 export interface UpdateConfigAction {
   type: ActionType.updateConfig;
   payload: Config;

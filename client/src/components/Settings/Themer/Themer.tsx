@@ -24,7 +24,7 @@ import {
 export const Themer = (): JSX.Element => {
   const {
     auth: { isAuthenticated },
-    config: { loading, config },
+    config: { loading, baseConfig: config },
     theme: { themes, userThemes },
   } = useSelector((state: State) => state);
 

@@ -26,6 +26,11 @@
       "authRequired": true
     },
     {
+      "name": "Profiles",
+      "dest": "/settings/profiles",
+      "authRequired": true
+    },
+    {
       "name": "CSS",
       "dest": "/settings/css",
       "authRequired": true

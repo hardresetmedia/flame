@@ -23,7 +23,7 @@ import { SearchBar } from '../SearchBar/SearchBar';
 import { Header } from './Header/Header';
 
 // Utils
-import { escapeRegex } from '../../utility';
+import { escapeRegex, visibleInProfile } from '../../utility';
 
 export const Home = (): JSX.Element => {
   const {
@@ -31,7 +31,17 @@ export const Home = (): JSX.Element => {
     bookmarks: { categories, loading: bookmarksLoading },
     config: { config },
     auth: { isAuthenticated },
+    profiles: { activeProfileId },
   } = useSelector((state: State) => state);
+
+  // Profile filtering happens at render time (same pattern as isPinned):
+  // switching profiles is a pure state change, no refetch needed.
+  const visibleApps = apps.filter((app) =>
+    visibleInProfile(app, activeProfileId)
+  );
+  const visibleCategories = categories.filter((category) =>
+    visibleInProfile(category, activeProfileId)
+  );
 
   const dispatch = useDispatch();
   const { getApps, getCategories } = bindActionCreators(
@@ -62,20 +72,20 @@ export const Home = (): JSX.Element => {
 
   useEffect(() => {
     if (localSearch) {
-      // Search through apps
+      // Search through apps (within the active profile)
       setAppSearchResult([
-        ...apps.filter(({ name, description }) =>
+        ...visibleApps.filter(({ name, description }) =>
           new RegExp(escapeRegex(localSearch), 'i').test(
             `${name} ${description}`
           )
         ),
       ]);
 
-      // Search through bookmarks
-      const category = { ...categories[0] };
+      // Search through bookmarks (within the active profile)
+      const category = { ...visibleCategories[0] };
 
       category.name = 'Search Results';
-      category.bookmarks = categories
+      category.bookmarks = visibleCategories
         .map(({ bookmarks }) => bookmarks)
         .flat()
         .filter(({ name }) =>
@@ -87,7 +97,7 @@ export const Home = (): JSX.Element => {
       setAppSearchResult(null);
       setBookmarkSearchResult(null);
     }
-  }, [localSearch]);
+  }, [localSearch, activeProfileId]);
 
   return (
     <Container>
@@ -104,8 +114,8 @@ export const Home = (): JSX.Element => {
       <Header />
 
       {!isAuthenticated &&
-      !apps.some((a) => a.isPinned) &&
-      !categories.some((c) => c.isPinned) ? (
+      !visibleApps.some((a) => a.isPinned) &&
+      !visibleCategories.some((c) => c.isPinned) ? (
         <Message>
           Welcome to Flame! Go to <Link to="/settings/app">/settings</Link>,
           login and start customizing your new homepage
@@ -114,7 +124,8 @@ export const Home = (): JSX.Element => {
         <></>
       )}
 
-      {!config.hideApps && (isAuthenticated || apps.some((a) => a.isPinned)) ? (
+      {!config.hideApps &&
+      (isAuthenticated || visibleApps.some((a) => a.isPinned)) ? (
         <Fragment>
           <SectionHeadline title="Applications" link="/applications" />
           {appsLoading ? (
@@ -123,10 +134,10 @@ export const Home = (): JSX.Element => {
             <AppGrid
               apps={
                 !appSearchResult
-                  ? apps.filter(({ isPinned }) => isPinned)
+                  ? visibleApps.filter(({ isPinned }) => isPinned)
                   : appSearchResult
               }
-              totalApps={apps.length}
+              totalApps={visibleApps.length}
               searching={!!localSearch}
             />
           )}
@@ -137,7 +148,7 @@ export const Home = (): JSX.Element => {
       )}
 
       {!config.hideCategories &&
-      (isAuthenticated || categories.some((c) => c.isPinned)) ? (
+      (isAuthenticated || visibleCategories.some((c) => c.isPinned)) ? (
         <Fragment>
           <SectionHeadline title="Bookmarks" link="/bookmarks" />
           {bookmarksLoading ? (
@@ -146,12 +157,12 @@ export const Home = (): JSX.Element => {
             <BookmarkGrid
               categories={
                 !bookmarkSearchResult
-                  ? categories.filter(
+                  ? visibleCategories.filter(
                       ({ isPinned, bookmarks }) => isPinned && bookmarks.length
                     )
                   : bookmarkSearchResult
               }
-              totalCategories={categories.length}
+              totalCategories={visibleCategories.length}
               searching={!!localSearch}
               fromHomepage={true}
             />

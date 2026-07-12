@@ -58,6 +58,20 @@ import {
   LogoutAction,
 } from './auth';
 
+import {
+  GetProfilesAction,
+  GetProfilesSuccessAction,
+  GetProfilesErrorAction,
+  AddProfileAction,
+  UpdateProfileAction,
+  DeleteProfileAction,
+  ReorderProfilesAction,
+  SetActiveProfileAction,
+  SetClientIpAction,
+} from './profile';
+
+import { ApplyProfileOverridesAction } from './config';
+
 export type Action =
   // Theme
   | SetThemeAction
@@ -105,4 +119,15 @@ export type Action =
   | LoginAction
   | LogoutAction
   | AutoLoginAction
-  | AuthErrorAction;
+  | AuthErrorAction
+  // Profiles
+  | GetProfilesAction
+  | GetProfilesSuccessAction
+  | GetProfilesErrorAction
+  | AddProfileAction
+  | UpdateProfileAction
+  | DeleteProfileAction
+  | ReorderProfilesAction
+  | SetActiveProfileAction
+  | SetClientIpAction
+  | ApplyProfileOverridesAction;

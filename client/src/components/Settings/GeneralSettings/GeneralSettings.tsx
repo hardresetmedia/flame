@@ -24,7 +24,8 @@ import { actionCreators } from '../../../store';
 
 export const GeneralSettings = (): JSX.Element => {
   const {
-    config: { loading, customQueries, config },
+    // baseConfig, not the profile-merged view — see UISettings
+    config: { loading, customQueries, baseConfig: config },
     bookmarks: { categories },
   } = useSelector((state: State) => state);
 

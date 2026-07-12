@@ -6,6 +6,8 @@ export interface NewApp {
   icon: string;
   isPublic: boolean;
   description: string;
+  // profile ids this app is assigned to; [] = visible in every profile
+  profileIds: number[];
 }
 
 export interface App extends Model, NewApp {

@@ -4,7 +4,7 @@ import { NewApp } from '../../../interfaces';
 
 import classes from './AppForm.module.css';
 
-import { ModalForm, InputGroup, Button } from '../../UI';
+import { ModalForm, InputGroup, Button, ProfilePicker } from '../../UI';
 import { inputHandler, newAppTemplate } from '../../../utility';
 import { bindActionCreators } from 'redux';
 import { actionCreators } from '../../../store';
@@ -78,6 +78,8 @@ export const AppForm = ({ modalHandler }: Props): JSX.Element => {
       data.append('description', formData.description);
       data.append('url', formData.url);
       data.append('isPublic', `${formData.isPublic ? 1 : 0}`);
+      // multipart carries profileIds as a JSON string; the server parses it
+      data.append('profileIds', JSON.stringify(formData.profileIds));
 
       return data;
     };
@@ -214,6 +216,12 @@ export const AppForm = ({ modalHandler }: Props): JSX.Element => {
           <option value={0}>Hidden (authentication required)</option>
         </select>
       </InputGroup>
+
+      {/* PROFILE ASSIGNMENT */}
+      <ProfilePicker
+        selectedIds={formData.profileIds}
+        onChange={(profileIds) => setFormData({ ...formData, profileIds })}
+      />
 
       {!appInUpdate ? (
         <Button>Add new application</Button>

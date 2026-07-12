@@ -28,6 +28,7 @@ describe('database migrations', () => {
       '03_weather.js',
       '04_bookmarks-order.js',
       '05_app-description.js',
+      '06_profiles.js',
     ]);
   });
 
@@ -37,7 +38,13 @@ describe('database migrations', () => {
     );
     const names = tables.map((t) => t.name);
 
-    for (const expected of ['apps', 'bookmarks', 'categories', 'weather']) {
+    for (const expected of [
+      'apps',
+      'bookmarks',
+      'categories',
+      'weather',
+      'profiles',
+    ]) {
       expect(names).toContain(expected);
     }
     // dropped by migration 01_new-config.js
@@ -52,6 +59,6 @@ describe('database migrations', () => {
     const [rows] = await sequelize.query(
       'SELECT COUNT(*) AS count FROM `SequelizeMeta`'
     );
-    expect(rows[0].count).toBe(6);
+    expect(rows[0].count).toBe(7);
   });
 });

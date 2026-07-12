@@ -1,6 +1,11 @@
 // End-to-end smoke tests: boots the real server + built client and walks the
 // critical paths (home render, login, app creation → home grid). This is the
 // safety net for the client toolchain migration — keep it green.
+//
+// All e2e specs share ONE server + SQLite DB (single Playwright webServer),
+// and Playwright runs files alphabetically. This file is prefixed "0-" so it
+// runs first, while the DB is still empty — its welcome-message test depends
+// on that. Later specs (1-profiles) seed their own data.
 import { test, expect } from '@playwright/test';
 
 const PASSWORD = 'e2e-password-123';

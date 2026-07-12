@@ -22,6 +22,13 @@ const Category = sequelize.define(
       allowNull: true,
       defaultValue: 1,
     },
+    // Profile assignment (array of profile ids); [] = visible in every
+    // profile. Bookmarks inherit their category's assignment.
+    profileIds: {
+      type: DataTypes.JSON,
+      allowNull: false,
+      defaultValue: [],
+    },
   },
   {
     tableName: 'categories',

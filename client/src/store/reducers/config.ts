@@ -5,15 +5,28 @@ import { configTemplate } from '../../utility';
 
 interface ConfigState {
   loading: boolean;
+  // server truth — what the settings forms read and edit
+  baseConfig: Config;
+  // derived view: baseConfig + the active profile's overrides. All regular
+  // consumers keep reading `config`, so overrides apply everywhere without
+  // touching them.
   config: Config;
+  activeOverrides: Partial<Config> | null;
   customQueries: Query[];
 }
 
 const initialState: ConfigState = {
   loading: true,
+  baseConfig: { ...configTemplate },
   config: { ...configTemplate },
+  activeOverrides: null,
   customQueries: [],
 };
+
+const merge = (base: Config, overrides: Partial<Config> | null): Config => ({
+  ...base,
+  ...(overrides ?? {}),
+});
 
 export const configReducer = (
   state: ConfigState = initialState,
@@ -24,13 +37,22 @@ export const configReducer = (
       return {
         ...state,
         loading: false,
-        config: action.payload,
+        baseConfig: action.payload,
+        config: merge(action.payload, state.activeOverrides),
       };
 
     case ActionType.updateConfig:
       return {
         ...state,
-        config: action.payload,
+        baseConfig: action.payload,
+        config: merge(action.payload, state.activeOverrides),
+      };
+
+    case ActionType.applyProfileOverrides:
+      return {
+        ...state,
+        activeOverrides: action.payload,
+        config: merge(state.baseConfig, action.payload),
       };
 
     case ActionType.fetchQueries:

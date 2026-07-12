@@ -63,6 +63,7 @@ api.use('/api/bookmarks', require('./routes/bookmark'));
 api.use('/api/queries', require('./routes/queries'));
 api.use('/api/auth', require('./routes/auth'));
 api.use('/api/themes', require('./routes/themes'));
+api.use('/api/profiles', require('./routes/profile'));
 
 // Custom error handler
 api.use(errorHandler);

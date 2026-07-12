@@ -52,4 +52,16 @@ export enum ActionType {
   logout = 'LOGOUT',
   autoLogin = 'AUTO_LOGIN',
   authError = 'AUTH_ERROR',
+  // PROFILES
+  getProfiles = 'GET_PROFILES',
+  getProfilesSuccess = 'GET_PROFILES_SUCCESS',
+  getProfilesError = 'GET_PROFILES_ERROR',
+  addProfile = 'ADD_PROFILE',
+  updateProfile = 'UPDATE_PROFILE',
+  deleteProfile = 'DELETE_PROFILE',
+  reorderProfiles = 'REORDER_PROFILES',
+  setActiveProfile = 'SET_ACTIVE_PROFILE',
+  setClientIp = 'SET_CLIENT_IP',
+  // CONFIG overrides (profiles feature)
+  applyProfileOverrides = 'APPLY_PROFILE_OVERRIDES',
 }

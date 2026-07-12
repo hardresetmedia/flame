@@ -3,14 +3,14 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import 'external-svg-loader';
 
 // Redux
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { autoLogin, getConfig } from './store/action-creators';
+import { autoLogin, getConfig, getProfiles } from './store/action-creators';
 import { actionCreators, store } from './store';
-import { State } from './store/reducers';
 
 // Utils
 import { decodeToken, parsePABToTheme } from './utility';
+import { useProfileResolver } from './hooks/useProfileResolver';
 
 // Routes
 import { Home } from './components/Home/Home';
@@ -22,17 +22,22 @@ import { NotificationCenter } from './components/NotificationCenter/Notification
 // Get config
 store.dispatch<any>(getConfig());
 
+// Get profiles (public endpoint; needed before the profile resolver runs)
+store.dispatch<any>(getProfiles());
+
 // Validate token
 if (localStorage.token) {
   store.dispatch<any>(autoLogin());
 }
 
 export const App = (): JSX.Element => {
-  const { config, loading } = useSelector((state: State) => state.config);
-
   const dispath = useDispatch();
   const { fetchQueries, setTheme, logout, createNotification, fetchThemes } =
     bindActionCreators(actionCreators, dispath);
+
+  // Profile activation: #!/name parsing, rules, remembered choice, default.
+  // Also (re)applies theme + config overrides + title on every resolution.
+  useProfileResolver();
 
   useEffect(() => {
     // check if token is valid
@@ -54,7 +59,10 @@ export const App = (): JSX.Element => {
     // load themes
     fetchThemes();
 
-    // set user theme if present
+    // Apply the saved theme instantly on first paint to avoid a flash. The
+    // profile resolver (useProfileResolver) is the single authority for the
+    // *effective* theme and re-applies it — including the "no saved theme ->
+    // config.defaultTheme" fallback — once profiles/config/themes settle.
     if (localStorage.theme) {
       setTheme(parsePABToTheme(localStorage.theme));
     }
@@ -64,13 +72,6 @@ export const App = (): JSX.Element => {
 
     return () => window.clearInterval(tokenIsValid);
   }, []);
-
-  // If there is no user theme, set the default one
-  useEffect(() => {
-    if (!loading && !localStorage.theme) {
-      setTheme(parsePABToTheme(config.defaultTheme), false);
-    }
-  }, [loading]);
 
   return (
     <>

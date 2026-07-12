@@ -1,0 +1,248 @@
+.Intro,
+.Hint {
+  color: var(--color-primary);
+  opacity: 0.7;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.Hint {
+  opacity: 0.6;
+  font-style: italic;
+}
+
+.Intro code,
+.ProfileForm code {
+  background: var(--color-accent);
+  color: var(--color-background);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* --- list view --- */
+.ProfileList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.ProfileRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid var(--color-accent);
+  border-radius: 4px;
+  color: var(--color-primary);
+}
+
+.ProfileInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ProfileName {
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.DefaultBadge {
+  font-size: 11px;
+  text-transform: uppercase;
+  background: var(--color-accent);
+  color: var(--color-background);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.ProfileMeta {
+  font-size: 13px;
+  opacity: 0.6;
+}
+
+.ProfileActions {
+  display: flex;
+  gap: 14px;
+}
+
+.ProfileActions span {
+  cursor: pointer;
+  color: var(--color-accent);
+  font-size: 14px;
+}
+
+.ProfileActions span:hover {
+  text-decoration: underline;
+}
+
+.Danger {
+  color: #ff5252 !important;
+}
+
+.AddButton {
+  margin-top: 8px;
+}
+
+/* --- form view --- */
+.ProfileForm {
+  color: var(--color-primary);
+}
+
+.SectionLabel {
+  font-weight: 600;
+  margin: 24px 0 4px;
+  color: var(--color-primary);
+  border-bottom: 1px solid var(--color-accent);
+  padding-bottom: 4px;
+}
+
+.OverrideRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0;
+  flex-wrap: wrap;
+}
+
+.OverrideToggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  min-width: 260px;
+}
+
+.OverrideToggle input {
+  width: auto;
+  margin: 0;
+}
+
+.OverrideRow input[type='text'],
+.OverrideRow select {
+  width: auto;
+  min-width: 140px;
+}
+
+.FormActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.Cancel {
+  cursor: pointer;
+  color: var(--color-accent);
+  font-size: 14px;
+}
+
+.Cancel:hover {
+  text-decoration: underline;
+}
+
+/* --- rules editor --- */
+.RulesEditor {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.Rule {
+  border: 1px solid var(--color-accent);
+  border-radius: 4px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.RuleHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.RuleControls {
+  display: flex;
+  gap: 12px;
+}
+
+.RuleControls span {
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.RuleControls span:hover {
+  opacity: 1;
+}
+
+.RuleField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.RuleField > label {
+  font-size: 13px;
+  opacity: 0.75;
+}
+
+.Inline {
+  display: flex;
+  gap: 8px;
+}
+
+.Inline input {
+  width: auto;
+  flex: 1;
+}
+
+.Chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.Chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.Chip input {
+  width: auto;
+  margin: 0;
+}
+
+.AddRule {
+  cursor: pointer;
+  color: var(--color-accent);
+  font-size: 14px;
+  align-self: flex-start;
+}
+
+.AddRule:hover {
+  text-decoration: underline;
+}
+
+/* live "this device right now" readout (rules engine phase) */
+.LiveReadout {
+  border: 1px dashed var(--color-accent);
+  border-radius: 4px;
+  padding: 12px;
+  margin: 12px 0;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.LiveReadout strong {
+  color: var(--color-accent);
+}

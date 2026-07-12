@@ -22,6 +22,7 @@ import { AppTable } from './AppTable/AppTable';
 import { State } from '../../store/reducers';
 import { bindActionCreators } from 'redux';
 import { actionCreators } from '../../store';
+import { visibleInProfile } from '../../utility';
 
 interface Props {
   searching: boolean;
@@ -32,6 +33,7 @@ export const Apps = (props: Props): JSX.Element => {
   const {
     apps: { apps, loading },
     auth: { isAuthenticated },
+    profiles: { activeProfileId },
   } = useSelector((state: State) => state);
 
   // Get Redux action creators
@@ -100,7 +102,12 @@ export const Apps = (props: Props): JSX.Element => {
         {loading ? (
           <Spinner />
         ) : !showTable ? (
-          <AppGrid apps={apps} searching={props.searching} />
+          // grid view respects the active profile; the edit table below
+          // deliberately shows everything (management view)
+          <AppGrid
+            apps={apps.filter((app) => visibleInProfile(app, activeProfileId))}
+            searching={props.searching}
+          />
         ) : (
           <AppTable openFormForUpdating={openFormForUpdating} />
         )}
