@@ -1,11 +1,9 @@
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import { parseTime } from '.';
 import { Token } from '../interfaces';
 
 export const decodeToken = (token: string): Token => {
-  const decoded = jwtDecode(token) as Token;
-
-  return decoded;
+  return jwtDecode<Token>(token);
 };
 
 export const parseTokenExpire = (expiresIn: number): string => {

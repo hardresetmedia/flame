@@ -74,7 +74,7 @@ export const autoLogin = () => async (dispatch: Dispatch<AutoLoginAction>) => {
 export const authError =
   (error: unknown, showNotification: boolean) =>
   (dispatch: Dispatch<AuthErrorAction>) => {
-    const apiError = error as AxiosError;
+    const apiError = error as AxiosError<{ error: string }>;
 
     if (showNotification) {
       dispatch<any>({

@@ -21,3 +21,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# stale React-17 dependency tree parked during the Vite migration — safe to delete
+/.stale-node_modules

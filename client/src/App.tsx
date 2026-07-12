@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import 'external-svg-loader';
 
 // Redux
@@ -10,7 +10,7 @@ import { actionCreators, store } from './store';
 import { State } from './store/reducers';
 
 // Utils
-import { checkVersion, decodeToken, parsePABToTheme } from './utility';
+import { decodeToken, parsePABToTheme } from './utility';
 
 // Routes
 import { Home } from './components/Home/Home';
@@ -36,7 +36,7 @@ export const App = (): JSX.Element => {
 
   useEffect(() => {
     // check if token is valid
-    const tokenIsValid = setInterval(() => {
+    const tokenIsValid = window.setInterval(() => {
       if (localStorage.token) {
         const expiresIn = decodeToken(localStorage.token).exp * 1000;
         const now = new Date().getTime();
@@ -59,9 +59,6 @@ export const App = (): JSX.Element => {
       setTheme(parsePABToTheme(localStorage.theme));
     }
 
-    // check for updated
-    checkVersion();
-
     // load custom search queries
     fetchQueries();
 
@@ -78,12 +75,14 @@ export const App = (): JSX.Element => {
   return (
     <>
       <BrowserRouter>
-        <Switch>
-          <Route exact path="/" component={Home} />
-          <Route path="/settings" component={Settings} />
-          <Route path="/applications" component={Apps} />
-          <Route path="/bookmarks" component={Bookmarks} />
-        </Switch>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/settings/*" element={<Settings />} />
+          {/* searching only applies to the Home-page local search; the
+              full-list pages never render in that state */}
+          <Route path="/applications" element={<Apps searching={false} />} />
+          <Route path="/bookmarks" element={<Bookmarks searching={false} />} />
+        </Routes>
       </BrowserRouter>
       <NotificationCenter />
     </>

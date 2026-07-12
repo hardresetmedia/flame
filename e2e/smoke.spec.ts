@@ -24,6 +24,27 @@ test('settings login form authenticates through the UI', async ({ page }) => {
   await expect(page.getByText('You are logged in')).toBeVisible();
 });
 
+test('every settings tab renders content after login', async ({ page }) => {
+  await page.goto('/settings/app');
+  await page.locator('#password').fill(PASSWORD);
+  await page.getByRole('button', { name: 'Login' }).click();
+  await expect(page.getByText('You are logged in')).toBeVisible();
+
+  for (const tab of [
+    'Theme',
+    'General',
+    'Interface',
+    'Weather',
+    'Docker',
+    'CSS',
+    'App',
+  ]) {
+    await page.getByRole('link', { name: tab, exact: true }).click();
+    // the settings content pane must render something for every tab
+    await expect(page.locator('section > *').first()).toBeVisible();
+  }
+});
+
 test('an app created via the API appears pinned on the home screen', async ({
   page,
   request,

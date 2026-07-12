@@ -1,4 +1,4 @@
-import { NavLink, Link, Switch, Route } from 'react-router-dom';
+import { NavLink, Link, Routes, Route } from 'react-router-dom';
 
 // Redux
 import { useSelector } from 'react-redux';
@@ -41,9 +41,12 @@ export const Settings = (): JSX.Element => {
         <nav className={classes.SettingsNav}>
           {tabs.map(({ name, dest }: SettingsRoute, idx) => (
             <NavLink
-              className={classes.SettingsNavLink}
-              activeClassName={classes.SettingsNavLinkActive}
-              exact
+              className={({ isActive }) =>
+                isActive
+                  ? `${classes.SettingsNavLink} ${classes.SettingsNavLinkActive}`
+                  : classes.SettingsNavLink
+              }
+              end
               to={dest}
               key={idx}
             >
@@ -54,24 +57,51 @@ export const Settings = (): JSX.Element => {
 
         {/* ROUTES */}
         <section className={classes.SettingsContent}>
-          <Switch>
-            <Route exact path="/settings" component={Themer} />
-            <ProtectedRoute
-              path="/settings/weather"
-              component={WeatherSettings}
+          {/* Relative to the parent "/settings/*" route in App.tsx */}
+          <Routes>
+            <Route index element={<Themer />} />
+            <Route
+              path="weather"
+              element={
+                <ProtectedRoute>
+                  <WeatherSettings />
+                </ProtectedRoute>
+              }
             />
-            <ProtectedRoute
-              path="/settings/general"
-              component={GeneralSettings}
+            <Route
+              path="general"
+              element={
+                <ProtectedRoute>
+                  <GeneralSettings />
+                </ProtectedRoute>
+              }
             />
-            <ProtectedRoute path="/settings/interface" component={UISettings} />
-            <ProtectedRoute
-              path="/settings/docker"
-              component={DockerSettings}
+            <Route
+              path="interface"
+              element={
+                <ProtectedRoute>
+                  <UISettings />
+                </ProtectedRoute>
+              }
             />
-            <ProtectedRoute path="/settings/css" component={StyleSettings} />
-            <Route path="/settings/app" component={AppDetails} />
-          </Switch>
+            <Route
+              path="docker"
+              element={
+                <ProtectedRoute>
+                  <DockerSettings />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="css"
+              element={
+                <ProtectedRoute>
+                  <StyleSettings />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="app" element={<AppDetails />} />
+          </Routes>
         </section>
       </div>
     </Container>

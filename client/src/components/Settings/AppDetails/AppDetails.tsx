@@ -28,13 +28,13 @@ export const AppDetails = (): JSX.Element => {
             <SettingsHeadline text="App version" />
             <p className={classes.text}>
               <a
-                href="https://github.com/pawelmalak/flame"
+                href="https://github.com/hardresetmedia/flame"
                 target="_blank"
                 rel="noreferrer"
               >
                 Flame
               </a>{' '}
-              version {process.env.REACT_APP_VERSION}
+              (fork) version {import.meta.env.VITE_APP_VERSION}
             </p>
 
             <p className={classes.text}>
