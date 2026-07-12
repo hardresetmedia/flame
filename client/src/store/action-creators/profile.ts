@@ -45,6 +45,24 @@ export const getProfiles =
     }
   };
 
+// Fetches the server-reported client IP for profile IP/CIDR rules. Best
+// effort: on failure the IP stays null and IP conditions simply never match.
+export const fetchClientHints =
+  () => async (dispatch: Dispatch<SetClientIpAction>) => {
+    try {
+      const res = await axios.get<ApiResponse<{ ip: string }>>(
+        '/api/client-hints'
+      );
+
+      dispatch({
+        type: ActionType.setClientIp,
+        payload: res.data.data.ip,
+      });
+    } catch (err) {
+      dispatch({ type: ActionType.setClientIp, payload: null });
+    }
+  };
+
 export const addProfile =
   (formData: Partial<NewProfile>) =>
   async (dispatch: Dispatch<AddProfileAction>) => {

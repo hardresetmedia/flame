@@ -5,7 +5,12 @@ import 'external-svg-loader';
 // Redux
 import { useDispatch } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { autoLogin, getConfig, getProfiles } from './store/action-creators';
+import {
+  autoLogin,
+  getConfig,
+  getProfiles,
+  fetchClientHints,
+} from './store/action-creators';
 import { actionCreators, store } from './store';
 
 // Utils
@@ -22,8 +27,10 @@ import { NotificationCenter } from './components/NotificationCenter/Notification
 // Get config
 store.dispatch<any>(getConfig());
 
-// Get profiles (public endpoint; needed before the profile resolver runs)
+// Get profiles + the client-IP hint (public endpoints; both needed before
+// the profile resolver evaluates rules)
 store.dispatch<any>(getProfiles());
+store.dispatch<any>(fetchClientHints());
 
 // Validate token
 if (localStorage.token) {

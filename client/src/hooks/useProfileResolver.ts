@@ -2,25 +2,33 @@
 // boot (once profiles + config have loaded), on every hashchange, and when
 // the profiles list changes. Precedence:
 //   explicit #!/name in the URL
-//   > matched auto-activation rule   (Phase: rules engine)
+//   > matched auto-activation rule
 //   > remembered explicit choice     (localStorage.lastProfile)
 //   > the isDefault profile
 //   > base view (no profile)
 // A remembered choice sits BELOW rules on purpose: rules encode per-device/
 // time intent and must not be permanently shadowed by one stale manual pick.
-import { useEffect } from 'react';
+//
+// Rules are evaluated ONCE per resolution (boot / hashchange), not on resize
+// or a clock tick — a startpage that rearranges itself mid-session is worse
+// than one that is stale until the next reload.
+import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { State } from '../store/reducers';
 import { actionCreators } from '../store';
 import { parseProfileHash } from '../utility';
+import { getDeviceSignals, DeviceSignals } from '../utility/deviceSignals';
+import { evaluateRules, RuleContext } from '../utility/rulesEngine';
 
 export const LAST_PROFILE_KEY = 'lastProfile';
 
 export const useProfileResolver = (): void => {
-  const { profiles, loaded: profilesLoaded } = useSelector(
-    (state: State) => state.profiles
-  );
+  const {
+    profiles,
+    loaded: profilesLoaded,
+    clientIp,
+  } = useSelector((state: State) => state.profiles);
   const { loading: configLoading } = useSelector(
     (state: State) => state.config
   );
@@ -32,7 +40,11 @@ export const useProfileResolver = (): void => {
     dispatch
   );
 
-  const resolve = () => {
+  // Device signals are measured once and cached — they don't change within a
+  // session in a way we act on (see the no-resize-re-eval note above).
+  const signalsRef = useRef<DeviceSignals | null>(null);
+
+  const resolve = async () => {
     const hashName = parseProfileHash();
 
     // 1. explicit hash
@@ -59,7 +71,22 @@ export const useProfileResolver = (): void => {
       // fall through to the rest of the chain
     }
 
-    // 2. rules (added by the rules engine phase; see utility/rulesEngine.ts)
+    // 2. auto-activation rules
+    if (!signalsRef.current) {
+      signalsRef.current = await getDeviceSignals();
+    }
+    const now = new Date();
+    const ctx: RuleContext = {
+      signals: signalsRef.current,
+      ip: clientIp,
+      minutesOfDay: now.getHours() * 60 + now.getMinutes(),
+      dayOfWeek: now.getDay(),
+    };
+    const ruled = evaluateRules(profiles, ctx);
+    if (ruled) {
+      setActiveProfile(ruled, 'rule');
+      return;
+    }
 
     // 3. remembered explicit choice
     const remembered = localStorage.getItem(LAST_PROFILE_KEY);
@@ -91,7 +118,11 @@ export const useProfileResolver = (): void => {
   useEffect(() => {
     // Wait for everything a profile controls to be loadable: the profile
     // list, the base config (for title/theme fallbacks) and the theme list
-    // (for per-profile theme names).
+    // (for per-profile theme names). clientIp is allowed to still be null —
+    // IP rules just won't match until it arrives, and the profiles-change
+    // dependency re-resolves once it does (setClientIp doesn't retrigger, so
+    // IP-only rules resolve on the next profiles update or hashchange; for a
+    // startpage that's acceptable, and the hints call is fast).
     if (!profilesLoaded || configLoading) {
       return;
     }
@@ -99,8 +130,9 @@ export const useProfileResolver = (): void => {
     resolve();
 
     // live switching: editing the hash re-resolves without a reload
-    window.addEventListener('hashchange', resolve);
-    return () => window.removeEventListener('hashchange', resolve);
+    const onHashChange = () => resolve();
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profilesLoaded, configLoading, profiles, themes, userThemes]);
+  }, [profilesLoaded, configLoading, profiles, themes, userThemes, clientIp]);
 };

@@ -7,6 +7,7 @@ import { actionCreators } from '../../../store';
 import { Profile } from '../../../interfaces';
 import { SettingsHeadline, Button } from '../../UI';
 import { ProfileForm } from './ProfileForm';
+import { LiveDeviceReadout } from './LiveDeviceReadout';
 import classes from './ProfilesSettings.module.css';
 
 export const ProfilesSettings = (): JSX.Element => {
@@ -51,6 +52,8 @@ export const ProfilesSettings = (): JSX.Element => {
         <code>#!/name</code> in the URL, or with the auto-activation rules on
         each profile.
       </p>
+
+      <LiveDeviceReadout />
 
       {profiles.length === 0 ? (
         <p className={classes.Hint}>No profiles yet.</p>

@@ -64,6 +64,7 @@ api.use('/api/queries', require('./routes/queries'));
 api.use('/api/auth', require('./routes/auth'));
 api.use('/api/themes', require('./routes/themes'));
 api.use('/api/profiles', require('./routes/profile'));
+api.use('/api/client-hints', require('./routes/clientHints'));
 
 // Custom error handler
 api.use(errorHandler);
