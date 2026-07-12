@@ -2,3 +2,6 @@ node_modules
 data
 public
 !client/public
+# Test artifacts (vitest scratch dirs live in the OS tmpdir; these are Playwright's)
+test-results/
+playwright-report/

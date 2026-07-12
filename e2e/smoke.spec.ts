@@ -1,0 +1,51 @@
+// End-to-end smoke tests: boots the real server + built client and walks the
+// critical paths (home render, login, app creation → home grid). This is the
+// safety net for the client toolchain migration — keep it green.
+import { test, expect } from '@playwright/test';
+
+const PASSWORD = 'e2e-password-123';
+
+test('home page boots with the default title and welcome message', async ({
+  page,
+}) => {
+  await page.goto('/');
+
+  await expect(page).toHaveTitle('Flame');
+  // Fresh install, anonymous visitor, nothing pinned → onboarding message.
+  await expect(page.getByText('Welcome to Flame!')).toBeVisible();
+});
+
+test('settings login form authenticates through the UI', async ({ page }) => {
+  await page.goto('/settings/app');
+
+  await page.locator('#password').fill(PASSWORD);
+  await page.getByRole('button', { name: 'Login' }).click();
+
+  await expect(page.getByText('You are logged in')).toBeVisible();
+});
+
+test('an app created via the API appears pinned on the home screen', async ({
+  page,
+  request,
+}) => {
+  const login = await request.post('/api/auth', {
+    data: { password: PASSWORD, duration: '1h' },
+  });
+  expect(login.ok()).toBe(true);
+  const { token } = (await login.json()).data;
+
+  const created = await request.post('/api/apps', {
+    headers: { 'Authorization-Flame': `Bearer ${token}` },
+    data: { name: 'SmokeApp', url: 'example.com' },
+  });
+  expect(created.status()).toBe(201);
+
+  await page.goto('/');
+  // pinAppsByDefault: true → the new app must show on the home grid.
+  await expect(page.getByText('SmokeApp')).toBeVisible();
+
+  const themeColor = await page.evaluate(() =>
+    getComputedStyle(document.body).getPropertyValue('--color-background')
+  );
+  expect(themeColor.trim()).not.toBe('');
+});

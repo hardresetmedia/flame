@@ -12,7 +12,10 @@
     "dev-server": "nodemon server.js -e js",
     "dev-client": "npm start --prefix client",
     "dev": "concurrently \"npm run dev-server\" \"npm run dev-client\"",
-    "skaffold": "concurrently \"npm run init-client\" \"npm run dev-server\""
+    "skaffold": "concurrently \"npm run init-client\" \"npm run dev-server\"",
+    "build:client": "npm run build --prefix client && rm -rf public && mkdir public && cp -R client/build/. public/",
+    "test": "vitest run",
+    "test:e2e": "playwright test"
   },
   "author": "",
   "license": "ISC",
@@ -24,7 +27,7 @@
     "docker-secret": "^1.2.4",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.3",
     "multer": "^1.4.3",
     "node-schedule": "^2.0.0",
     "sequelize": "^6.9.0",
@@ -33,6 +36,9 @@
     "ws": "^8.2.3"
   },
   "devDependencies": {
-    "nodemon": "^2.0.14"
+    "@playwright/test": "^1.61.1",
+    "nodemon": "^2.0.14",
+    "supertest": "^7.2.2",
+    "vitest": "^4.1.10"
   }
 }
