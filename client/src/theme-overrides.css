@@ -79,13 +79,8 @@ html body ._BookmarkIcon_130sc_33 {
 }
 
 html body ._AppCard_8g64f_1 {
-  background-color: #6c1f1f;
   margin-bottom: 4px;
   padding: 0.5rem !important;
-  transition: background-color 500ms ease-out !important;
-}
-html body ._AppCard_8g64f_1:hover {
-  background-color: rgba(68, 74, 27, 0.8);
 }
 
 html body ._AppGrid_b8d9s_1,
