@@ -10,7 +10,7 @@ const authHeader = async (request: APIRequestContext) => {
     data: { password: PASSWORD, duration: '1h' },
   });
   const { token } = (await res.json()).data;
-  return { 'Authorization-Flame': `Bearer ${token}` };
+  return { Authorization: `Bearer ${token}` };
 };
 
 test('profiles filter apps by URL, switch live, and override the title', async ({

@@ -9,7 +9,7 @@ const authHeader = async (request: APIRequestContext) => {
     data: { password: PASSWORD, duration: '1h' },
   });
   const { token } = (await res.json()).data;
-  return { 'Authorization-Flame': `Bearer ${token}` };
+  return { Authorization: `Bearer ${token}` };
 };
 
 test('a viewport rule auto-activates a profile; hash still overrides', async ({

@@ -2,8 +2,9 @@
    Settings -> Custom CSS override so it survives a data-dir reset and
    doesn't depend on data/uploads/exkw10ujvhaa1_png.jpg being re-uploaded.
    Selectors target this build's CSS Modules class names directly (see
-   client/vite.config.ts) rather than element structure, so they'll need
-   re-checking if the underlying component .module.css files ever change. */
+   client/vite.config.ts) - note Vite prefixes every generated class with
+   a leading underscore (e.g. `_AppCard_8g64f_1`, not `AppCard_8g64f_1`) -
+   fragile to changes in the underlying component .module.css files. */
 
 html {
   min-height: 100vh;
@@ -34,36 +35,36 @@ html body::before {
   z-index: 1;
 }
 
-.Bookmarks_130sc_17 a:hover {
+._Bookmarks_130sc_17 a:hover {
   text-decoration: none !important;
   padding-left: 6px !important;
   color: #f2f075 !important;
 }
 
 @media screen and (min-width: 768px) {
-  html body .WeatherDetails_a58ir_6 {
+  html body ._WeatherDetails_a58ir_6 {
     font-size: 2.125rem;
   }
 }
 
-html body .WeatherWidget_a58ir_1 {
+html body ._WeatherWidget_a58ir_1 {
   align-items: center;
 }
 
-html body .BookmarkCard_130sc_1 h3 {
+html body ._BookmarkCard_130sc_1 h3 {
   font-size: 1.5rem;
 }
 
-html body .AppCardIcon_8g64f_8,
-html body .BookmarkIcon_130sc_33 {
+html body ._AppCardIcon_8g64f_8,
+html body ._BookmarkIcon_130sc_33 {
   filter: grayscale(0.7);
 }
 
-html body .HomeSpace_1bggo_28 {
+html body ._HomeSpace_1bggo_28 {
   height: 60px;
 }
 
-html body .SectionHeadline_hni02_1 {
+html body ._SectionHeadline_hni02_1 {
   color: #aac519;
   font-size: 2.125rem;
   letter-spacing: 2px;
@@ -71,72 +72,72 @@ html body .SectionHeadline_hni02_1 {
   max-width: 100%;
 }
 
-html body .BookmarkIcon_130sc_33 {
+html body ._BookmarkIcon_130sc_33 {
   height: 24px;
   margin-right: 0.5rem;
   width: 24px;
 }
 
-html body .AppCard_8g64f_1 {
+html body ._AppCard_8g64f_1 {
   background-color: #6c1f1f;
   margin-bottom: 4px;
   padding: 0.5rem !important;
   transition: background-color 500ms ease-out !important;
 }
-html body .AppCard_8g64f_1:hover {
+html body ._AppCard_8g64f_1:hover {
   background-color: rgba(68, 74, 27, 0.8);
 }
 
-html body .AppGrid_b8d9s_1,
-html body .BookmarkGrid_qy5iw_1 {
+html body ._AppGrid_b8d9s_1,
+html body ._BookmarkGrid_qy5iw_1 {
   gap: 0.5rem;
 }
 
 @media (min-width: 769px) {
-  html body .Container_16t9n_1 {
+  html body ._Container_16t9n_1 {
     width: 99% !important;
   }
 }
 
 @media (min-width: 1201px) {
-  html body .Container_16t9n_1 {
-    padding: 1rem 0px;
+  html body ._Container_16t9n_1 {
+    padding: 1rem 0px !important;
   }
-  html body #root .BookmarkGrid_qy5iw_1 {
+  html body #root ._BookmarkGrid_qy5iw_1 {
     grid-template-columns: repeat(7, 1fr) !important;
   }
-  html body #root .AppGrid_b8d9s_1 {
+  html body #root ._AppGrid_b8d9s_1 {
     grid-template-columns: repeat(4, 1fr) !important;
   }
 }
 
 @media (min-width: 1801px) {
-  html body .Container_16t9n_1 {
-    padding: 1rem 0px;
+  html body ._Container_16t9n_1 {
+    padding: 1rem 0px !important;
   }
-  html body #root .BookmarkGrid_qy5iw_1 {
+  html body #root ._BookmarkGrid_qy5iw_1 {
     grid-template-columns: repeat(8, 1fr) !important;
   }
-  html body #root .AppGrid_b8d9s_1 {
+  html body #root ._AppGrid_b8d9s_1 {
     grid-template-columns: repeat(7, 1fr) !important;
   }
 }
 
 @media (min-width: 2000px) {
-  html body #root .BookmarkGrid_qy5iw_1 {
+  html body #root ._BookmarkGrid_qy5iw_1 {
     grid-template-columns: repeat(9, 1fr) !important;
   }
-  html body #root .AppGrid_b8d9s_1 {
+  html body #root ._AppGrid_b8d9s_1 {
     grid-template-columns: repeat(6, 1fr) !important;
   }
 }
 
-html body .AppCardDetails_8g64f_14 h5 {
+html body ._AppCardDetails_8g64f_14 h5 {
   font-size: 1.1em;
   font-weight: bold;
 }
 
-html body .SectionHeadline_hni02_1 {
+html body ._SectionHeadline_hni02_1 {
   font-size: 1.5em;
   font-weight: bolder;
 }

@@ -40,7 +40,7 @@ export const loginAndGetToken = async (api) => {
 };
 
 export const authHeaders = (token) => ({
-  'Authorization-Flame': `Bearer ${token}`,
+  Authorization: `Bearer ${token}`,
 });
 
 // Several endpoints (reorder, category delete) fire their DB writes without

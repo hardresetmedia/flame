@@ -61,7 +61,7 @@ test('an app created via the API appears pinned on the home screen', async ({
   const { token } = (await login.json()).data;
 
   const created = await request.post('/api/apps', {
-    headers: { 'Authorization-Flame': `Bearer ${token}` },
+    headers: { Authorization: `Bearer ${token}` },
     data: { name: 'SmokeApp', url: 'example.com' },
   });
   expect(created.status()).toBe(201);
